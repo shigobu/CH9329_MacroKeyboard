@@ -6,12 +6,12 @@
 #define USART0_BAUD_RATE(BAUD_RATE) ((float)(F_CPU * 64 / (16 * (float)BAUD_RATE)) + 0.5)
 #define USART0_AVAILABLE (USART0.STATUS & USART_RXCIF_bm)
 
-#define CH9329_PACKET_HEAD1 0
-#define CH9329_PACKET_HEAD2 1
-#define CH9329_PACKET_ADDR  2
-#define CH9329_PACKET_CMD   3
-#define CH9329_PACKET_LEN   4
-#define CH9329_PACKET_DATA  5
+#define CH9329_PACKET_INDEX_HEAD1 0
+#define CH9329_PACKET_INDEX_HEAD2 1
+#define CH9329_PACKET_INDEX_ADDR  2
+#define CH9329_PACKET_INDEX_CMD   3
+#define CH9329_PACKET_INDEX_LEN   4
+#define CH9329_PACKET_INDEX_DATA  5
 #define CH9329_CMD_SEND_KB_GENERAL_DATA   0x02
 #define CH9329_CMD_SEND_MY_HID_DATA       0x06
 #define CH9329_CMD_READ_MY_HID_DATA       0x87
@@ -33,10 +33,10 @@ const uint8_t SW_PIN = PIN_PA1;
 const uint8_t LED1_PIN = PIN_PA2;
 const uint8_t LED2_PIN = PIN_PA3;
 const uint8_t RECEIVE_PACKET_LENGTH = 14;
-volatile uint8_t reportData[KEY_REPORT_DATA_LENGTH] = {};
-volatile uint8_t receivePacketPosition = 0;
-volatile uint8_t receivePacket[RECEIVE_PACKET_LENGTH] = {};
-volatile uint8_t keyConfig[KEY_CONFIGDATA_LEN] = {};
+uint8_t reportData[KEY_REPORT_DATA_LENGTH] = {};
+uint8_t receivePacketPosition = 0;
+uint8_t receivePacket[RECEIVE_PACKET_LENGTH] = {};
+uint8_t keyConfig[KEY_CONFIGDATA_LEN] = {};
 const int KeyNum = 7;
 const int threshold[KeyNum] = {
   // 次の数列は、しなぷすのハード製作記の回路設計サービスで計算して得られたもの
@@ -67,6 +67,13 @@ void USART0_sendValue(uint8_t c) {
   USART0.TXDATAL = c;
 }
 
+// 複数の値送信
+void USART0_sendValue(uint8_t* c, size_t length) {
+  for (size_t i = 0; i < length; i++ ) {
+    USART0_sendValue(c[i]);
+  }
+}
+
 //一つの値受信
 uint8_t USART0_read() {
   while (!USART0_AVAILABLE) {
@@ -83,7 +90,7 @@ ISR(USART0_RXC_vect) {
   }
   
   receivePacket[receivePacketPosition] = tempData;
-  if (receivePacketPosition == CH9329_PACKET_LEN) {
+  if (receivePacketPosition == CH9329_PACKET_INDEX_LEN) {
     // 受信データがLENの場合で、値が8より多い場合はエラー停止。
     if (tempData > MY_HID_DATA_LEN) {
       digitalWriteFast(LED2_PIN, HIGH);
@@ -94,16 +101,9 @@ ISR(USART0_RXC_vect) {
   receivePacketPosition++;
 }
 
-// 複数の値送信
-void USART0_sendValue(uint8_t* c, size_t length) {
-  for (size_t i = 0; i < length; i++ ) {
-    USART0_sendValue(c[i]);
-  }
-}
-
 // EEPROMからキー設定を取得します。
 void getKeyConfigData(uint8_t address, uint8_t* buf, size_t length) {
-  for (int i = 0; i < length; i++){
+  for (size_t i = 0; i < length; i++){
     buf[i] = EEPROM.read(address);    
   }
 }
@@ -123,8 +123,8 @@ void loop() {
   if (receivePacketPosition == RECEIVE_PACKET_LENGTH) {
     receivePacketPosition = 0;
     // HIDカスタムデータの場合、解析し、EEPROMに保存。
-    if (receivePacket[CH9329_PACKET_CMD] == CH9329_CMD_READ_MY_HID_DATA) {
-      uint8_t* hidData = receivePacket + CH9329_PACKET_DATA;
+    if (receivePacket[CH9329_PACKET_INDEX_CMD] == CH9329_CMD_READ_MY_HID_DATA) {
+      uint8_t* hidData = receivePacket + CH9329_PACKET_INDEX_DATA;
       eepromAddress = hidData[0] * KEY_CONFIGDATA_LEN;
       for(int i = 1; i < MY_HID_DATA_LEN; i++) {
         EEPROM.update(eepromAddress, hidData[i]);
