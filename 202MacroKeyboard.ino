@@ -12,7 +12,12 @@
 #define CH9329_PACKET_CMD   3
 #define CH9329_PACKET_LEN   4
 #define CH9329_PACKET_DATA  5
-#define CH9329_CMD_READ_MY_HID_DATA  0x87
+#define CH9329_CMD_SEND_KB_GENERAL_DATA   0x02
+#define CH9329_CMD_SEND_MY_HID_DATA       0x06
+#define CH9329_CMD_READ_MY_HID_DATA       0x87
+#define CH9329_HEAD1_DATA 0x57
+#define CH9329_HEAD2_DATA 0xab
+#define CH9329_ADDR_DATA  0x00
 
 /* カスタムHIDデータのデータ形式　
 struct myHidData{
@@ -31,12 +36,14 @@ const uint8_t RECEIVE_PACKET_LENGTH = 14;
 volatile uint8_t reportData[KEY_REPORT_DATA_LENGTH] = {};
 volatile uint8_t receivePacketPosition = 0;
 volatile uint8_t receivePacket[RECEIVE_PACKET_LENGTH] = {};
+volatile uint8_t keyConfig[KEY_CONFIGDATA_LEN] = {};
 const int KeyNum = 7;
 const int threshold[KeyNum] = {
   // 次の数列は、しなぷすのハード製作記の回路設計サービスで計算して得られたもの
   42, 165, 347, 511, 641, 807, 965
 };
 ResKeypad keypad(SW_PIN, KeyNum, threshold, NULL, false);
+int8_t prevKey = -1;
 
 // USART初期化
 void USART0_init(void) {
@@ -94,6 +101,13 @@ void USART0_sendValue(uint8_t* c, size_t length) {
   }
 }
 
+// EEPROMからキー設定を取得します。
+void getKeyConfigData(uint8_t address, uint8_t* buf, size_t length) {
+  for (int i = 0; i < length; i++){
+    buf[i] = EEPROM.read(address);    
+  }
+}
+
 void setup() {
   USART0_init();
   CH9329_Keyboard.begin();
@@ -104,19 +118,92 @@ void setup() {
 }
 
 void loop() {
+  uint8_t eepromAddress = 0;
   // 受信バッファインデックスがバッファの最後(+1)を指している場合、受信完了とみなして処理を行う。
   if (receivePacketPosition == RECEIVE_PACKET_LENGTH) {
     receivePacketPosition = 0;
     // HIDカスタムデータの場合、解析し、EEPROMに保存。
-    if (receivePacket[CH9329_PACKET_CMD] == CH9329_CMD_READ_MY_HID_DATA){
+    if (receivePacket[CH9329_PACKET_CMD] == CH9329_CMD_READ_MY_HID_DATA) {
       uint8_t* hidData = receivePacket + CH9329_PACKET_DATA;
-      uint8_t eepromAddress = hidData[0] * KEY_CONFIGDATA_LEN;
-      for(int i = 1; i < MY_HID_DATA_LEN; i++){
+      eepromAddress = hidData[0] * KEY_CONFIGDATA_LEN;
+      for(int i = 1; i < MY_HID_DATA_LEN; i++) {
         EEPROM.update(eepromAddress, hidData[i]);
         eepromAddress++;
       }
     }
   }
 
-  int key = keypad.GetKey();
+  // ボタンの押下状態取得
+  int8_t key = keypad.GetKeyState();
+  
+  // 前回と同じ場合は処理しない。
+  if (prevKey == key) {
+    return;
+  }
+  prevKey = key;
+ 
+  if (key == -1) {
+    // キーの開放
+    reportData[0] = CH9329_HEAD1_DATA;
+    reportData[1] = CH9329_HEAD2_DATA;
+    reportData[2] = CH9329_ADDR_DATA;
+    reportData[3] = CH9329_CMD_SEND_KB_GENERAL_DATA;
+    reportData[4] = 0x08;
+    reportData[5] = 0;
+    reportData[6] = 0;
+    reportData[7] = 0;
+    reportData[8] = 0;
+    reportData[9] = 0;
+    reportData[10] = 0;
+    reportData[11] = 0;
+    reportData[12] = 0;
+    int sum = 0;
+    for (size_t i = 0; i < 13; i++) {
+      sum += reportData[i];
+    }
+    reportData[13] = (uint8_t)(sum & 0xff);  
+    USART0_sendValue(reportData, KEY_REPORT_DATA_LENGTH);
+  }
+  else {
+    eepromAddress = key * KEY_CONFIGDATA_LEN;
+    getKeyConfigData(eepromAddress, keyConfig, KEY_CONFIGDATA_LEN);
+    // 0xffは、EEPROMの初期値。
+    if (keyConfig[0] == 0 || keyConfig[0] == 0xff) {
+      // カスタムボタン押下情報
+      reportData[0] = CH9329_HEAD1_DATA;              //フレームヘッダ
+      reportData[1] = CH9329_HEAD2_DATA;              //フレームヘッダ
+      reportData[2] = CH9329_ADDR_DATA;               //アドレス
+      reportData[3] = CH9329_CMD_SEND_MY_HID_DATA;    //コマンド
+      reportData[4] = 0x01;
+      reportData[5] = key;
+      int sum = 0;
+      for (size_t i = 0; i < 6; i++) {
+        sum += reportData[i];
+      }
+      reportData[6] = (uint8_t)(sum & 0xff);
+      USART0_sendValue(reportData, 7);
+    }
+    else {
+      // キー押下情報
+      reportData[0] = CH9329_HEAD1_DATA;
+      reportData[1] = CH9329_HEAD2_DATA;
+      reportData[2] = CH9329_ADDR_DATA;
+      reportData[3] = CH9329_CMD_SEND_KB_GENERAL_DATA;
+      reportData[4] = 0x08;
+      reportData[5] = keyConfig[6];
+      reportData[6] = 0;
+      reportData[7] = keyConfig[0];
+      reportData[8] = keyConfig[1];
+      reportData[9] = keyConfig[2];
+      reportData[10] = keyConfig[3];
+      reportData[11] = keyConfig[4];
+      reportData[12] = keyConfig[5];
+      int sum = 0;
+      for (size_t i = 0; i < 13; i++) {
+        sum += reportData[i];
+      }
+      reportData[13] = (uint8_t)(sum & 0xff);  
+      USART0_sendValue(reportData, KEY_REPORT_DATA_LENGTH);
+    }    
+  }
 }
