@@ -108,6 +108,15 @@ void getKeyConfigData(uint8_t address, uint8_t* buf, size_t length) {
   }
 }
 
+// レポートデータのSUMを計算して返します。
+uint8_t calcReportDataSum(uint8_t* reportData, size_t dataLength){
+  int sum = 0;
+  for (size_t i = 0; i < dataLength; i++) {
+    sum += reportData[i];
+  }
+  return (uint8_t)(sum & 0xff);
+}
+
 void setup() {
   USART0_init();
   CH9329_Keyboard.begin();
@@ -157,11 +166,7 @@ void loop() {
     reportData[10] = 0;
     reportData[11] = 0;
     reportData[12] = 0;
-    int sum = 0;
-    for (size_t i = 0; i < 13; i++) {
-      sum += reportData[i];
-    }
-    reportData[13] = (uint8_t)(sum & 0xff);  
+    reportData[13] = calcReportDataSum(reportData, 13);  
     USART0_sendValue(reportData, KEY_REPORT_DATA_LENGTH);
   }
   else {
@@ -176,11 +181,7 @@ void loop() {
       reportData[3] = CH9329_CMD_SEND_MY_HID_DATA;    //コマンド
       reportData[4] = 0x01;
       reportData[5] = key;
-      int sum = 0;
-      for (size_t i = 0; i < 6; i++) {
-        sum += reportData[i];
-      }
-      reportData[6] = (uint8_t)(sum & 0xff);
+      reportData[6] = calcReportDataSum(reportData, 6);  
       USART0_sendValue(reportData, 7);
     }
     else {
@@ -198,11 +199,7 @@ void loop() {
       reportData[10] = keyConfig[3];
       reportData[11] = keyConfig[4];
       reportData[12] = keyConfig[5];
-      int sum = 0;
-      for (size_t i = 0; i < 13; i++) {
-        sum += reportData[i];
-      }
-      reportData[13] = (uint8_t)(sum & 0xff);  
+      reportData[13] = calcReportDataSum(reportData, 13);  
       USART0_sendValue(reportData, KEY_REPORT_DATA_LENGTH);
     }    
   }
