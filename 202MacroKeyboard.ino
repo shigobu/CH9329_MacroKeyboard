@@ -134,10 +134,18 @@ void loop() {
     // HIDカスタムデータの場合、解析し、EEPROMに保存。
     if (receivePacket[CH9329_PACKET_INDEX_CMD] == CH9329_CMD_READ_MY_HID_DATA) {
       uint8_t* hidData = receivePacket + CH9329_PACKET_INDEX_DATA;
-      eepromAddress = hidData[0] * KEY_CONFIGDATA_LEN;
-      for(int i = 1; i < MY_HID_DATA_LEN; i++) {
-        EEPROM.update(eepromAddress, hidData[i]);
-        eepromAddress++;
+      // 0番目の値が0x10の場合、LED点灯情報
+      if (hidData[0] == 0x10) {
+        digitalWriteFast(LED1_PIN, hidData[1] & 0b01);
+        digitalWriteFast(LED2_PIN, hidData[1] & 0b10);
+      }
+      // 0番目の値が0x10以外の場合、キー設定。設定するキー番号そのまま。
+      else {
+        eepromAddress = (hidData[0] & 0x0f) * KEY_CONFIGDATA_LEN;
+        for(int i = 1; i < MY_HID_DATA_LEN; i++) {
+          EEPROM.update(eepromAddress, hidData[i]);
+          eepromAddress++;
+        }
       }
     }
   }
