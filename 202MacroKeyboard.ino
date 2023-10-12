@@ -21,7 +21,7 @@
 
 /* カスタムHIDデータのデータ形式　
 struct myHidData{
-  uint8_t num;          //キー番号
+  uint8_t num;          //下位4bitキー番号、上位0x10LED情報。LED情報は、keys[0]に格納。keys[1-5]は予約。
   uint8_t keys[6];      //キー 先頭が0だったらカスタムボタン(PC側で動作を設定)。それ以外は、キーボードボタン。
   uint8_t modifiers;    //修飾キー
 }
