@@ -136,8 +136,18 @@ void loop() {
       uint8_t* hidData = receivePacket + CH9329_PACKET_INDEX_DATA;
       // 0番目の値が0x10の場合、LED点灯情報
       if (hidData[0] == 0x10) {
-        digitalWriteFast(LED1_PIN, hidData[1] & 0b01);
-        digitalWriteFast(LED2_PIN, hidData[1] & 0b10);
+        if (hidData[1]) {
+          analogWrite(LED1_PIN, hidData[1]);
+        }
+        else {
+          digitalWriteFast(LED1_PIN, LOW);
+        }
+        if (hidData[2]) {
+          analogWrite(LED2_PIN, hidData[2]);
+        }
+        else {
+          digitalWriteFast(LED2_PIN, LOW);
+        }
       }
       // 0番目の値が0x10以外の場合、キー設定。設定するキー番号そのまま。
       else {
