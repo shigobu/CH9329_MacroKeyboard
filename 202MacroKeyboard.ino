@@ -21,7 +21,7 @@
 
 /* カスタムHIDデータのデータ形式　
 struct myHidData{
-  uint8_t num;          //下位4bitキー番号、上位0x10LED情報。LED情報は、keys[0]に格納。keys[1-5]は予約。
+  uint8_t state;        //下位4bitキー番号、上位0x10LED情報。LED情報は、keysに格納。
   uint8_t keys[6];      //キー 先頭が0だったらカスタムボタン(PC側で動作を設定)。それ以外は、キーボードボタン。
   uint8_t modifiers;    //修飾キー
 }
@@ -119,7 +119,6 @@ uint8_t calcReportDataSum(uint8_t* reportData, size_t dataLength){
 
 void setup() {
   USART0_init();
-  CH9329_Keyboard.begin();
 
   pinModeFast(SW_PIN, INPUT);
   pinModeFast(LED2_PIN, OUTPUT);
