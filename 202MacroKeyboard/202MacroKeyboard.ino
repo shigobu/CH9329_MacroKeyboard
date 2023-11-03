@@ -21,7 +21,7 @@
 
 /* カスタムHIDデータのデータ形式　
 struct myHidData{
-  uint8_t state;        //下位4bitキー番号、上位0x10LED情報。LED情報は、keysに格納。
+  uint8_t state;        //0x00~0x7fキー番号、0x80LED情報。LED情報は、keysに格納。
   uint8_t keys[6];      //キー 先頭が0だったらカスタムボタン(PC側で動作を設定)。それ以外は、キーボードボタン。
   uint8_t modifiers;    //修飾キー
 }
@@ -30,8 +30,8 @@ const uint8_t MY_HID_DATA_LEN = 8;      //1 + 1 + 6 = 8
 const uint8_t KEY_CONFIGDATA_LEN = 7;   //カスタムHIDデータからキー番号の領域を無くしたもの。EEPROMに格納されるデータ。
 
 const uint8_t SW_PIN = PIN_PA1;
-const uint8_t LED1_PIN = PIN_PA2;
-const uint8_t LED2_PIN = PIN_PA3;
+const uint8_t LED1_PIN = PIN_PA3;
+const uint8_t LED2_PIN = PIN_PA2;
 const uint8_t RECEIVE_PACKET_LENGTH = 14;
 uint8_t reportData[KEY_REPORT_DATA_LENGTH] = {};
 uint8_t receivePacketPosition = 0;
@@ -94,7 +94,8 @@ ISR(USART0_RXC_vect) {
     // 受信データがLENの場合で、値が8より多い場合はエラー停止。
     if (tempData > MY_HID_DATA_LEN) {
       digitalWriteFast(LED2_PIN, HIGH);
-      while(true);
+      while(digitalReadFast(SW_PIN) == HIGH){};
+      resetViaSWR();
     }
     receivePacketPosition += MY_HID_DATA_LEN - tempData;
   }
@@ -104,7 +105,7 @@ ISR(USART0_RXC_vect) {
 // EEPROMからキー設定を取得します。
 void getKeyConfigData(uint8_t address, uint8_t* buf, size_t length) {
   for (size_t i = 0; i < length; i++){
-    buf[i] = EEPROM.read(address);    
+    buf[i] = EEPROM.read(address++);    
   }
 }
 
@@ -117,10 +118,16 @@ uint8_t calcReportDataSum(uint8_t* reportData, size_t dataLength){
   return (uint8_t)(sum & 0xff);
 }
 
+// ソフトウェアリセットを実行します。
+void resetViaSWR() {
+  _PROTECTED_WRITE(RSTCTRL.SWRR,1);
+}
+
 void setup() {
   USART0_init();
 
   pinModeFast(SW_PIN, INPUT);
+  pinModeFast(LED1_PIN, OUTPUT);
   pinModeFast(LED2_PIN, OUTPUT);
   delay(5000);
 }
@@ -134,19 +141,9 @@ void loop() {
     if (receivePacket[CH9329_PACKET_INDEX_CMD] == CH9329_CMD_READ_MY_HID_DATA) {
       uint8_t* hidData = receivePacket + CH9329_PACKET_INDEX_DATA;
       // 0番目の値が0x10の場合、LED点灯情報
-      if (hidData[0] == 0x10) {
-        if (hidData[1]) {
-          analogWrite(LED1_PIN, hidData[1]);
-        }
-        else {
-          digitalWriteFast(LED1_PIN, LOW);
-        }
-        if (hidData[2]) {
-          analogWrite(LED2_PIN, hidData[2]);
-        }
-        else {
-          digitalWriteFast(LED2_PIN, LOW);
-        }
+      if (hidData[0] == 0x80) {
+        analogWrite(LED1_PIN, hidData[1]);
+        analogWrite(LED2_PIN, hidData[2]);
       }
       // 0番目の値が0x10以外の場合、キー設定。設定するキー番号そのまま。
       else {
