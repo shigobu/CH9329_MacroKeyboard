@@ -15,9 +15,29 @@ namespace WindowsClient
     internal class ViewModel: INotifyPropertyChanged
     {
         public ViewModel() 
-        { 
-            
+        {
+            ime.ImeEnabledChanged += Ime_ImeEnabledChanged;
+            ime.StartListening();
         }
+
+        /// <summary>
+        /// IMEモードが変更されたときのイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Ime_ImeEnabledChanged(object sender, ImeEnabledChangedEventArgs e)
+        {
+            if (e.ImeEnabled)
+            {
+                Keyboard.SetLED((byte)LedBrightness, 0);
+            }
+            else
+            {
+                Keyboard.SetLED(0, 0);
+            }
+        }
+
+        private readonly Ime ime = new Ime();
 
         #region INotifyPropertyChangedの実装
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -83,6 +103,13 @@ namespace WindowsClient
             }
         }
 
-
+        /// <summary>
+        /// 終了処理を実行します。
+        /// </summary>
+        public void Close()
+        {
+            Keyboard.SetLED(0, 0);
+            ime.StopListening();
+        }
     }
 }

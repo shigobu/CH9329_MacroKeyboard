@@ -32,7 +32,7 @@ namespace WindowsClient
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            viewModel.Keyboard.SetLED(0, 0);
+            viewModel.Close();
         }
     }
 }
