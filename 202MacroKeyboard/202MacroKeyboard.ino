@@ -74,14 +74,6 @@ void USART0_sendValue(uint8_t* c, size_t length) {
   }
 }
 
-//一つの値受信
-uint8_t USART0_read() {
-  while (!USART0_AVAILABLE) {
-    ;
-  }
-  return USART0.RXDATAL;
-}
-
 // 受信割り込み
 ISR(USART0_RXC_vect) {
   uint8_t tempData = USART0.RXDATAL;
