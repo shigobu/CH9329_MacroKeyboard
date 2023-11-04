@@ -22,7 +22,17 @@ namespace WindowsClient
     {
         public MainWindow()
         {
+            this.DataContext = viewModel;
             InitializeComponent();
+            ledTestButton.Click += viewModel.LedTestButton_Click;
+            LedBrightness.ValueChanged += viewModel.LedBrightness_ValueChanged;
+        }
+
+        private ViewModel viewModel = new ViewModel();
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            viewModel.Keyboard.SetLED(0, 0);
         }
     }
 }

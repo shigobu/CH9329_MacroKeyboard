@@ -3,10 +3,45 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WindowsClient"
+        xmlns:local="clr-namespace:WindowsClient" 
+        xmlns:localConverter="clr-namespace:WindowsClient.Converter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="202マクロキーボード" Height="450" Width="400" Closed="Window_Closed">
+    <Window.Resources>
+        <localConverter:DoubleStringConverter x:Key="doubleStringConverter"/>
+        <localConverter:DoubleIntConverter x:Key="doubleIntConverter"/>
+    </Window.Resources>
+    <TabControl>
+        <TabItem Header="全体">
+            <StackPanel Margin="3">
+                <DockPanel Margin="3">
+                    <TextBlock DockPanel.Dock="Left" Text="LEDの明るさ" Margin="3"/>
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding Value, ElementName=LedBrightness, Converter={StaticResource doubleStringConverter}, ConverterParameter=f0}" TextAlignment="Center" Margin="3" Width="25"/>
+                    <Slider x:Name="LedBrightness" Margin="3" Minimum="0" Maximum="255" Value="{Binding LedBrightness, Converter={StaticResource doubleIntConverter}}" SmallChange="1" LargeChange="10"/>
+                </DockPanel>
+                <ToggleButton x:Name="ledTestButton" Content="LED点灯" Margin="3" Width="100" HorizontalAlignment="Left" IsChecked="{Binding DoLedTeat}"/>
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="1">
+            
+        </TabItem>
+        <TabItem Header="2">
 
-    </Grid>
+        </TabItem>
+        <TabItem Header="3">
+
+        </TabItem>
+        <TabItem Header="4">
+
+        </TabItem>
+        <TabItem Header="5">
+
+        </TabItem>
+        <TabItem Header="6">
+
+        </TabItem>
+        <TabItem Header="7">
+
+        </TabItem>
+    </TabControl>
 </Window>
