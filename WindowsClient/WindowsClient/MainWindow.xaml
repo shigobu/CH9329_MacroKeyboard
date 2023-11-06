@@ -1,29 +1,65 @@
 ﻿<Window x:Class="WindowsClient.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WindowsClient" 
-        xmlns:localConverter="clr-namespace:WindowsClient.Converter"
-        mc:Ignorable="d"
-        Title="202マクロキーボード" Height="450" Width="400" Closed="Window_Closed">
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:WindowsClient"
+    xmlns:localConverter="clr-namespace:WindowsClient.Converter"
+    mc:Ignorable="d"
+    Title="202マクロキーボード" Height="450" Width="400" Closed="Window_Closed">
     <Window.Resources>
-        <localConverter:DoubleStringConverter x:Key="doubleStringConverter"/>
-        <localConverter:DoubleIntConverter x:Key="doubleIntConverter"/>
+        <localConverter:DoubleStringConverter x:Key="doubleStringConverter" />
+        <localConverter:DoubleIntConverter x:Key="doubleIntConverter" />
+        <Style x:Key="ToggleButtonStyle" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border
+                            x:Name="border"
+                            Background="#0FF"
+                            BorderBrush="#000"
+                            BorderThickness="1"
+                            CornerRadius="5"
+                            SnapsToDevicePixels="True">
+                            <ContentPresenter
+                                x:Name="contentPresenter"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Focusable="False"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#C31010" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <TabControl>
         <TabItem Header="全体">
             <StackPanel Margin="3">
                 <DockPanel Margin="3">
-                    <TextBlock DockPanel.Dock="Left" Text="LEDの明るさ" Margin="3"/>
-                    <TextBlock DockPanel.Dock="Right" Text="{Binding Value, ElementName=LedBrightness, Converter={StaticResource doubleStringConverter}, ConverterParameter=f0}" TextAlignment="Center" Margin="3" Width="25"/>
-                    <Slider x:Name="LedBrightness" Margin="3" Minimum="0" Maximum="255" Value="{Binding LedBrightness, Converter={StaticResource doubleIntConverter}}" SmallChange="1" LargeChange="10"/>
+                    <TextBlock DockPanel.Dock="Left" Text="LEDの明るさ" Margin="3" />
+                    <TextBlock DockPanel.Dock="Right"
+                        Text="{Binding Value, ElementName=LedBrightness, Converter={StaticResource doubleStringConverter}, ConverterParameter=f0}"
+                        TextAlignment="Center" Margin="3" Width="25" />
+                    <Slider x:Name="LedBrightness" Margin="3" Minimum="0" Maximum="255"
+                        Value="{Binding LedBrightness, Converter={StaticResource doubleIntConverter}}"
+                        SmallChange="1" LargeChange="10" />
                 </DockPanel>
-                <ToggleButton x:Name="ledTestButton" Content="LED点灯" Margin="3" Width="100" HorizontalAlignment="Left" IsChecked="{Binding DoLedTeat}"/>
+                <ToggleButton x:Name="ledTestButton" Content="LED点灯" Margin="3" Width="100"
+                    HorizontalAlignment="Left" IsChecked="{Binding DoLedTeat}"
+                    Style="{StaticResource ToggleButtonStyle}" />
             </StackPanel>
         </TabItem>
         <TabItem Header="1" Width="30">
-            
+
         </TabItem>
         <TabItem Header="2" Width="30">
 

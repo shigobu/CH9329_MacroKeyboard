@@ -81,7 +81,7 @@ namespace WindowsClient.Model
         /// </summary>
         public async void StopListening()
         {
-            if (tokenSource != null)
+            if (tokenSource != null && loopTask != null)
             {
                 tokenSource.Cancel();
                 try
@@ -92,12 +92,13 @@ namespace WindowsClient.Model
                 {
                     tokenSource.Dispose();
                     tokenSource = null;
+                    loopTask = null;
                 }
             }
         }
 
         /// <summary>
-        /// MIDIメッセージを取得するタスク
+        /// IMEモードを監視するタスク
         /// </summary>
         private void Loop()
         {
