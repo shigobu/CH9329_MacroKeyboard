@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using WindowsClient.Model;
 
@@ -19,7 +20,8 @@ namespace WindowsClient
             ime.ImeEnabledChanged += Ime_ImeEnabledChanged;
             ime.StartListening();
 
-            IsKetboardReady = Keyboard.DeviceReady;
+            this.Keyboard = new _202MacroKeyboard();
+            OpenKeybord();
         }
 
         /// <summary>
@@ -45,6 +47,11 @@ namespace WindowsClient
         public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
 
+        /// <summary>
+        /// LED点灯ボタンクリックイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void LedTestButton_Click(object sender, RoutedEventArgs e)
         {
             if (DoLedTeat)
@@ -57,6 +64,11 @@ namespace WindowsClient
             }
         }
 
+        /// <summary>
+        /// LEDの明るさ変更時のイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void LedBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (DoLedTeat)
@@ -65,11 +77,20 @@ namespace WindowsClient
             }
         }
 
+        /// <summary>
+        ///  再接続ボタンイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void ReConnectButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenKeybord();
+        }
 
         /// <summary>
         /// マクロキーボードのオブジェクト
         /// </summary>
-        public _202MacroKeyboard Keyboard { get; set; } = _202MacroKeyboard.Open();
+        public _202MacroKeyboard Keyboard { get; set; }
 
         private bool isKetboardReady = false;
 
@@ -132,6 +153,15 @@ namespace WindowsClient
                 this.doLedTest = value;
                 this.PropertyChanged?.Invoke(this, LedTeatPropertyChangedEventArgs);
             }
+        }
+
+        /// <summary>
+        /// キーボードを開き、接続状態を更新します。
+        /// </summary>
+        public void OpenKeybord()
+        {
+            this.Keyboard.Open();
+            IsKetboardReady = Keyboard.DeviceReady;
         }
 
         /// <summary>

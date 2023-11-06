@@ -26,6 +26,7 @@ namespace WindowsClient
             InitializeComponent();
             ledTestButton.Click += viewModel.LedTestButton_Click;
             LedBrightness.ValueChanged += viewModel.LedBrightness_ValueChanged;
+            ReConnectButton.Click += viewModel.ReConnectButton_Click;
         }
 
         private ViewModel viewModel = new ViewModel();

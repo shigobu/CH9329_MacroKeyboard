@@ -1,4 +1,5 @@
-﻿using OaktreeLab.USBDevice;
+﻿using Microsoft.VisualBasic;
+using OaktreeLab.USBDevice;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,16 +15,18 @@ namespace WindowsClient
 
         private static byte LEDstate = 0x80;
 
-        private _202MacroKeyboard() : base()
+        public _202MacroKeyboard() : base()
         {
         
         }
 
-        public static _202MacroKeyboard Open()
+        /// <summary>
+        /// キーボードをオープンします。
+        /// </summary>
+        /// <returns></returns>
+        public bool Open()
         {
-            _202MacroKeyboard keyboard = new _202MacroKeyboard();
-            keyboard.Open(vid, pid);
-            return keyboard;
+            return base.Open(vid, pid);
         }
 
         /// <summary>

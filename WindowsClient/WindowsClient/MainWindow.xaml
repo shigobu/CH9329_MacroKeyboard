@@ -44,8 +44,8 @@
     </Window.Resources>
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Margin="3" Orientation="Horizontal" Visibility="{Binding ShowReconnectButton, Converter={StaticResource boolToVisible}}">
-            <TextBlock Text="キーボードが見つかりません。" TextAlignment="Center"/>
-            <Button Content="再接続"/>
+            <TextBlock Text="キーボードが見つかりません。" TextAlignment="Center" VerticalAlignment="Center"/>
+            <Button x:Name="ReConnectButton" Content="再接続" Padding="10"/>
         </StackPanel>
         <TabControl IsEnabled="{Binding IsKetboardReady}">
             <TabItem Header="全体">
