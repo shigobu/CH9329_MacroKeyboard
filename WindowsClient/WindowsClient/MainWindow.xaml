@@ -10,6 +10,7 @@
     <Window.Resources>
         <localConverter:DoubleStringConverter x:Key="doubleStringConverter" />
         <localConverter:DoubleIntConverter x:Key="doubleIntConverter" />
+        <BooleanToVisibilityConverter x:Key="boolToVisible"/>
         <Style x:Key="ToggleButtonStyle" TargetType="{x:Type ToggleButton}">
             <Setter Property="Padding" Value="10,5" />
             <Setter Property="Template">
@@ -41,43 +42,49 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <TabControl>
-        <TabItem Header="全体">
-            <StackPanel Margin="3">
-                <DockPanel Margin="3">
-                    <TextBlock DockPanel.Dock="Left" Text="LEDの明るさ" Margin="3" />
-                    <TextBlock DockPanel.Dock="Right"
-                        Text="{Binding Value, ElementName=LedBrightness, Converter={StaticResource doubleStringConverter}, ConverterParameter=f0}"
-                        TextAlignment="Center" Margin="3" Width="25" />
-                    <Slider x:Name="LedBrightness" Margin="3" Minimum="0" Maximum="255"
-                        Value="{Binding LedBrightness, Converter={StaticResource doubleIntConverter}}"
-                        SmallChange="1" LargeChange="10" />
-                </DockPanel>
-                <ToggleButton x:Name="ledTestButton" Content="LED点灯" Margin="3" Width="100"
-                    HorizontalAlignment="Left" IsChecked="{Binding DoLedTeat}"
-                    Style="{StaticResource ToggleButtonStyle}" />
-            </StackPanel>
-        </TabItem>
-        <TabItem Header="1" Width="30">
-
-        </TabItem>
-        <TabItem Header="2" Width="30">
-
-        </TabItem>
-        <TabItem Header="3" Width="30">
-
-        </TabItem>
-        <TabItem Header="4" Width="30">
-
-        </TabItem>
-        <TabItem Header="5" Width="30">
-
-        </TabItem>
-        <TabItem Header="6" Width="30">
-
-        </TabItem>
-        <TabItem Header="7" Width="30">
-
-        </TabItem>
-    </TabControl>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="3" Orientation="Horizontal" Visibility="{Binding ShowReconnectButton, Converter={StaticResource boolToVisible}}">
+            <TextBlock Text="キーボードが見つかりません。" TextAlignment="Center"/>
+            <Button Content="再接続"/>
+        </StackPanel>
+        <TabControl IsEnabled="{Binding IsKetboardReady}">
+            <TabItem Header="全体">
+                <StackPanel Margin="3">
+                    <DockPanel Margin="3">
+                        <TextBlock DockPanel.Dock="Left" Text="LEDの明るさ" Margin="3" />
+                        <TextBlock DockPanel.Dock="Right"
+                            Text="{Binding Value, ElementName=LedBrightness, Converter={StaticResource doubleStringConverter}, ConverterParameter=f0}"
+                            TextAlignment="Center" Margin="3" Width="25" />
+                        <Slider x:Name="LedBrightness" Margin="3" Minimum="0" Maximum="255"
+                            Value="{Binding LedBrightness, Converter={StaticResource doubleIntConverter}}"
+                            SmallChange="1" LargeChange="10" />
+                    </DockPanel>
+                    <ToggleButton x:Name="ledTestButton" Content="LED点灯" Margin="3" Width="100"
+                        HorizontalAlignment="Left" IsChecked="{Binding DoLedTeat}" />
+                        <!-- Style="{StaticResource ToggleButtonStyle}" /> -->
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="1" Width="30">
+    
+            </TabItem>
+            <TabItem Header="2" Width="30">
+    
+            </TabItem>
+            <TabItem Header="3" Width="30">
+    
+            </TabItem>
+            <TabItem Header="4" Width="30">
+    
+            </TabItem>
+            <TabItem Header="5" Width="30">
+    
+            </TabItem>
+            <TabItem Header="6" Width="30">
+    
+            </TabItem>
+            <TabItem Header="7" Width="30">
+    
+            </TabItem>
+        </TabControl>
+    </DockPanel>
 </Window>

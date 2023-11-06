@@ -33,7 +33,10 @@ namespace WindowsClient
         /// <param name="LED2">LED2</param>
         public void SetLED(byte LED1,  byte LED2)
         {
-            this.Send(8, LEDstate, LED1, LED2, 0, 0, 0, 0, 0);
+            if (this.DeviceReady)
+            {
+                this.Send(8, LEDstate, LED1, LED2, 0, 0, 0, 0, 0);
+            }
         }
     }
 }

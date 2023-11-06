@@ -18,6 +18,8 @@ namespace WindowsClient
         {
             ime.ImeEnabledChanged += Ime_ImeEnabledChanged;
             ime.StartListening();
+
+            IsKetboardReady = Keyboard.DeviceReady;
         }
 
         /// <summary>
@@ -68,6 +70,35 @@ namespace WindowsClient
         /// マクロキーボードのオブジェクト
         /// </summary>
         public _202MacroKeyboard Keyboard { get; set; } = _202MacroKeyboard.Open();
+
+        private bool isKetboardReady = false;
+
+        private static readonly PropertyChangedEventArgs IsKetboardReadyPropertyChangedEventArgs = new(nameof(IsKetboardReady));
+
+        /// <summary>
+        /// キーボードが接続されていて、使える状態かどうか。
+        /// </summary>
+        public bool IsKetboardReady
+        {
+            get { return isKetboardReady; }
+            set
+            {
+                if (isKetboardReady == value) { return; }
+                isKetboardReady = value;
+                this.PropertyChanged?.Invoke(this, IsKetboardReadyPropertyChangedEventArgs);
+                this.PropertyChanged?.Invoke(this, ShowReconnectButtonPropertyChangedEventArgs);
+           }
+        }
+
+        private static readonly PropertyChangedEventArgs ShowReconnectButtonPropertyChangedEventArgs = new(nameof(ShowReconnectButton));
+
+        /// <summary>
+        /// キーボードの再接続ボタンを表示するかどうか。
+        /// </summary>
+        public bool ShowReconnectButton
+        {
+            get { return !IsKetboardReady; }
+        }
 
 
         private GeneralSetting _setting = new GeneralSetting();
