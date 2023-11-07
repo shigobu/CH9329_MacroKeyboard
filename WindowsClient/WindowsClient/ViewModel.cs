@@ -170,6 +170,7 @@ namespace WindowsClient
         public void Close()
         {
             Keyboard.SetLED(0, 0);
+            Keyboard.Close();
             ime.StopListening();
         }
     }
