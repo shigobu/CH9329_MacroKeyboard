@@ -115,7 +115,7 @@ namespace WindowsClient.Model
                     ImeEnabledChanged?.Invoke(this, new ImeEnabledChangedEventArgs(imeEnabled));
                 }
                 lastImeEnabled = imeEnabled;
-                Thread.Sleep(1);
+                Thread.Sleep(100);
             }
         }
 
