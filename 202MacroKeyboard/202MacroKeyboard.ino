@@ -115,6 +115,26 @@ void resetViaSWR() {
   _PROTECTED_WRITE(RSTCTRL.SWRR,1);
 }
 
+// キーの開放情報を送信します。
+void releaseKey() {
+  // キーの開放
+  reportData[0] = CH9329_HEAD1_DATA;
+  reportData[1] = CH9329_HEAD2_DATA;
+  reportData[2] = CH9329_ADDR_DATA;
+  reportData[3] = CH9329_CMD_SEND_KB_GENERAL_DATA;
+  reportData[4] = 0x08;
+  reportData[5] = 0;
+  reportData[6] = 0;
+  reportData[7] = 0;
+  reportData[8] = 0;
+  reportData[9] = 0;
+  reportData[10] = 0;
+  reportData[11] = 0;
+  reportData[12] = 0;
+  reportData[13] = calcReportDataSum(reportData, 13);  
+  USART0_sendValue(reportData, KEY_REPORT_DATA_LENGTH);
+}
+
 void setup() {
   USART0_init();
 
@@ -155,25 +175,24 @@ void loop() {
   if (prevKey == key) {
     return;
   }
-  prevKey = key;
+
+  // 前回がキー入力の場合、キーの開放を行う。
+  if (prevKey != -1) {
+    // 前回のキー情報を取得する。
+    eepromAddress = prevKey * KEY_CONFIGDATA_LEN;
+    getKeyConfigData(eepromAddress, keyConfig, KEY_CONFIGDATA_LEN);
+    // 0xffは、EEPROMの初期値。
+    if (keyConfig[0] == 0 || keyConfig[0] == 0xff) {
+      // 前回がカスタムボタンの場合、なにもしない。
+    }
+    else {
+      // キーの開放
+      releaseKey();
+    }
+  }
  
   if (key == -1) {
-    // キーの開放
-    reportData[0] = CH9329_HEAD1_DATA;
-    reportData[1] = CH9329_HEAD2_DATA;
-    reportData[2] = CH9329_ADDR_DATA;
-    reportData[3] = CH9329_CMD_SEND_KB_GENERAL_DATA;
-    reportData[4] = 0x08;
-    reportData[5] = 0;
-    reportData[6] = 0;
-    reportData[7] = 0;
-    reportData[8] = 0;
-    reportData[9] = 0;
-    reportData[10] = 0;
-    reportData[11] = 0;
-    reportData[12] = 0;
-    reportData[13] = calcReportDataSum(reportData, 13);  
-    USART0_sendValue(reportData, KEY_REPORT_DATA_LENGTH);
+    // なにもしない。
   }
   else {
     eepromAddress = key * KEY_CONFIGDATA_LEN;
@@ -209,4 +228,7 @@ void loop() {
       USART0_sendValue(reportData, KEY_REPORT_DATA_LENGTH);
     }    
   }
+
+  // 前回の情報を保持
+  prevKey = key;
 }
