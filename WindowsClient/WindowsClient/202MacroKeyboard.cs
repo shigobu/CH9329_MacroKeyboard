@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsClient.Model;
 
 namespace WindowsClient
 {
@@ -38,8 +39,28 @@ namespace WindowsClient
         {
             if (this.DeviceReady)
             {
-                this.Send(8, LEDstate, LED1, LED2, 0, 0, 0, 0, 0);
+                this.Send(8, LEDstate, LED1, LED2);
             }
+        }
+
+        /// <summary>
+        /// キー設定をキーボードへ書き込みます。
+        /// </summary>
+        /// <param name="keySetting">キー設定</param>
+        public void WriteKeySetting(KeySetting keySetting)
+        {   
+            byte[] sendData = new byte[9];
+            sendData[0] = 8;
+            sendData[1] = keySetting.state;
+            sendData[2] = keySetting.keys[0];
+            sendData[3] = keySetting.keys[1];
+            sendData[4] = keySetting.keys[2];
+            sendData[5] = keySetting.keys[3];
+            sendData[6] = keySetting.keys[4];
+            sendData[7] = keySetting.keys[5];
+            sendData[8] = keySetting.modifiers;
+
+            this.Send(sendData);
         }
     }
 }
