@@ -19,7 +19,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace OaktreeLab.USBDevice
+namespace WindowsClient.Model
 {
     public class HIDSimple : IDisposable
     {
@@ -86,7 +86,7 @@ namespace OaktreeLab.USBDevice
                 }
                 finally
                 {
-                    if(buffer != IntPtr.Zero)
+                    if (buffer != IntPtr.Zero)
                     {
                         Marshal.FreeCoTaskMem(buffer);
                     }
@@ -412,31 +412,31 @@ namespace OaktreeLab.USBDevice
         internal struct HIDD_ATTRIBUTES
         {
             public int Size; // = sizeof (struct _HIDD_ATTRIBUTES) = 10 
-            public UInt16 VendorID;
-            public UInt16 ProductID;
-            public UInt16 VersionNumber;
+            public ushort VendorID;
+            public ushort ProductID;
+            public ushort VersionNumber;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct HIDP_CAPS
         {
-            public UInt16 Usage;
-            public UInt16 UsagePage;
-            public UInt16 InputReportByteLength;
-            public UInt16 OutputReportByteLength;
-            public UInt16 FeatureReportByteLength;
+            public ushort Usage;
+            public ushort UsagePage;
+            public ushort InputReportByteLength;
+            public ushort OutputReportByteLength;
+            public ushort FeatureReportByteLength;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
-            public UInt16[] Reserved;
-            public UInt16 NumberLinkCollectionNodes;
-            public UInt16 NumberInputButtonCaps;
-            public UInt16 NumberInputValueCaps;
-            public UInt16 NumberInputDataIndices;
-            public UInt16 NumberOutputButtonCaps;
-            public UInt16 NumberOutputValueCaps;
-            public UInt16 NumberOutputDataIndices;
-            public UInt16 NumberFeatureButtonCaps;
-            public UInt16 NumberFeatureValueCaps;
-            public UInt16 NumberFeatureDataIndices;
+            public ushort[] Reserved;
+            public ushort NumberLinkCollectionNodes;
+            public ushort NumberInputButtonCaps;
+            public ushort NumberInputValueCaps;
+            public ushort NumberInputDataIndices;
+            public ushort NumberOutputButtonCaps;
+            public ushort NumberOutputValueCaps;
+            public ushort NumberOutputDataIndices;
+            public ushort NumberFeatureButtonCaps;
+            public ushort NumberFeatureValueCaps;
+            public ushort NumberFeatureDataIndices;
         }
 
         internal const int DIGCF_PRESENT = 0x00000002;

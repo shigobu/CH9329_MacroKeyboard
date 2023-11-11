@@ -11,36 +11,6 @@
         <localConverter:DoubleStringConverter x:Key="doubleStringConverter" />
         <localConverter:DoubleIntConverter x:Key="doubleIntConverter" />
         <BooleanToVisibilityConverter x:Key="boolToVisible"/>
-        <Style x:Key="ToggleButtonStyle" TargetType="{x:Type ToggleButton}">
-            <Setter Property="Padding" Value="10,5" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ToggleButton}">
-                        <Border
-                            x:Name="border"
-                            Background="#0FF"
-                            BorderBrush="#000"
-                            BorderThickness="1"
-                            CornerRadius="5"
-                            SnapsToDevicePixels="True">
-                            <ContentPresenter
-                                x:Name="contentPresenter"
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Focusable="False"
-                                RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#C31010" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Window.Resources>
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Margin="3" Orientation="Horizontal" Visibility="{Binding ShowReconnectButton, Converter={StaticResource boolToVisible}}">
@@ -61,7 +31,6 @@
                     </DockPanel>
                     <ToggleButton x:Name="ledTestButton" Content="LED点灯" Margin="3" Width="100"
                         HorizontalAlignment="Left" IsChecked="{Binding DoLedTeat}" />
-                        <!-- Style="{StaticResource ToggleButtonStyle}" /> -->
                 </StackPanel>
             </TabItem>
             <TabItem Header="1" Width="30">

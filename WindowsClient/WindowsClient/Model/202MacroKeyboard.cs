@@ -1,13 +1,11 @@
 ﻿using Microsoft.VisualBasic;
-using OaktreeLab.USBDevice;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WindowsClient.Model;
 
-namespace WindowsClient
+namespace WindowsClient.Model
 {
     internal class _202MacroKeyboard : HIDSimple
     {
@@ -18,7 +16,7 @@ namespace WindowsClient
 
         public _202MacroKeyboard() : base()
         {
-        
+
         }
 
         /// <summary>
@@ -27,7 +25,7 @@ namespace WindowsClient
         /// <returns></returns>
         public bool Open()
         {
-            return base.Open(vid, pid);
+            return Open(vid, pid);
         }
 
         /// <summary>
@@ -35,11 +33,11 @@ namespace WindowsClient
         /// </summary>
         /// <param name="LED1">LED1</param>
         /// <param name="LED2">LED2</param>
-        public void SetLED(byte LED1,  byte LED2)
+        public void SetLED(byte LED1, byte LED2)
         {
-            if (this.DeviceReady)
+            if (DeviceReady)
             {
-                this.Send(8, LEDstate, LED1, LED2);
+                Send(8, LEDstate, LED1, LED2);
             }
         }
 
@@ -48,7 +46,7 @@ namespace WindowsClient
         /// </summary>
         /// <param name="keySetting">キー設定</param>
         public void WriteKeySetting(KeySetting keySetting)
-        {   
+        {
             byte[] sendData = new byte[9];
             sendData[0] = 8;
             sendData[1] = keySetting.state;
@@ -60,7 +58,7 @@ namespace WindowsClient
             sendData[7] = keySetting.keys[5];
             sendData[8] = keySetting.modifiers;
 
-            this.Send(sendData);
+            Send(sendData);
         }
     }
 }
