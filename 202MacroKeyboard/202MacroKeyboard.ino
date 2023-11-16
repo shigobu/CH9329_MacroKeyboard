@@ -19,6 +19,8 @@
 #define CH9329_HEAD2_DATA 0xab
 #define CH9329_ADDR_DATA  0x00
 
+#define LED_STATE 0x80
+
 /* カスタムHIDデータのデータ形式　
 struct myHidData{
   uint8_t state;        //0x00~0x7fキー番号、0x80LED情報。LED情報は、keysに格納。
@@ -152,8 +154,8 @@ void loop() {
     // HIDカスタムデータの場合、解析し、EEPROMに保存。
     if (receivePacket[CH9329_PACKET_INDEX_CMD] == CH9329_CMD_READ_MY_HID_DATA) {
       uint8_t* hidData = receivePacket + CH9329_PACKET_INDEX_DATA;
-      // 0番目の値が0x10の場合、LED点灯情報
-      if (hidData[0] == 0x80) {
+      // 0番目の値が0x80の場合、LED点灯情報
+      if (hidData[0] == LED_STATE) {
         analogWrite(LED1_PIN, hidData[1]);
         analogWrite(LED2_PIN, hidData[2]);
       }
