@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="clr-namespace:WindowsClient"
+    xmlns:local="clr-namespace:WindowsClient.View"
     xmlns:localConverter="clr-namespace:WindowsClient.Converter"
     mc:Ignorable="d"
     Title="202マクロキーボード" Height="450" Width="400" Closed="Window_Closed">
@@ -34,25 +34,25 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="1" Width="30">
-    
+                <local:KeySettingControl/>
             </TabItem>
             <TabItem Header="2" Width="30">
-    
+                <local:KeySettingControl/>
             </TabItem>
             <TabItem Header="3" Width="30">
-    
+                <local:KeySettingControl/>
             </TabItem>
             <TabItem Header="4" Width="30">
-    
+                <local:KeySettingControl/>
             </TabItem>
             <TabItem Header="5" Width="30">
-    
+                <local:KeySettingControl/>
             </TabItem>
             <TabItem Header="6" Width="30">
-    
+                <local:KeySettingControl/>
             </TabItem>
             <TabItem Header="7" Width="30">
-    
+                <local:KeySettingControl/>
             </TabItem>
         </TabControl>
     </DockPanel>
