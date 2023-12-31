@@ -24,5 +24,38 @@ namespace WindowsClient.View
         {
             InitializeComponent();
         }
+
+        private void Mode_Checked(object sender, RoutedEventArgs e)
+        {
+            if (mainTab == null)
+            {
+                return;
+            }
+
+            if (sender == none)
+            {
+                mainTab.SelectedIndex = 0;
+            }
+            else if (sender == same)
+            {
+                mainTab.SelectedIndex = 1;
+            }
+            else if (sender == order)
+            {
+                mainTab.SelectedIndex = 2;
+            }
+            else if (sender == command)
+            {
+                mainTab.SelectedIndex = 3;
+            }
+            else if (sender == sound)
+            {
+                mainTab.SelectedIndex = 4;
+            }
+            else
+            {
+                mainTab.SelectedIndex = 0;
+            }
+        }
     }
 }

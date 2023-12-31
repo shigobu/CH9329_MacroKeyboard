@@ -18,14 +18,14 @@
     <DockPanel>
         <GroupBox Header="動作モード" DockPanel.Dock="Left">
             <StackPanel>
-                <RadioButton x:Name="none" Content="なし" IsChecked="True"/>
-                <RadioButton x:Name="same" Content="同時"/>
-                <RadioButton x:Name="order" Content="順番"/>
-                <RadioButton x:Name="command" Content="コマンド"/>
-                <RadioButton x:Name="sound" Content="音"/>
+                <RadioButton x:Name="none" Content="なし" IsChecked="True" Checked="Mode_Checked"/>
+                <RadioButton x:Name="same" Content="同時" Checked="Mode_Checked"/>
+                <RadioButton x:Name="order" Content="順番" Checked="Mode_Checked"/>
+                <RadioButton x:Name="command" Content="コマンド" Checked="Mode_Checked"/>
+                <RadioButton x:Name="sound" Content="音" Checked="Mode_Checked"/>
             </StackPanel>
         </GroupBox>
-        <TabControl Margin="0,10,0,0" SelectedIndex="0">
+        <TabControl x:Name="mainTab" Margin="0,10,0,0" SelectedIndex="0">
             <TabControl.Template>
                 <ControlTemplate TargetType="{x:Type TabControl}">
                     <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
@@ -37,21 +37,45 @@
             <TabItem>
                 <StackPanel>
                     <TextBlock Text="指定のキーを同時押しします。" Margin="3"/>
-                    <TextBox IsReadOnly="True" Margin="3"/>
-                    <TextBox IsReadOnly="True" Margin="3"/>
-                    <TextBox IsReadOnly="True" Margin="3"/>
-                    <TextBox IsReadOnly="True" Margin="3"/>
-                    <TextBox IsReadOnly="True" Margin="3"/>
-                    <TextBox IsReadOnly="True" Margin="3"/>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="設定" Margin="3"/>
+                        <TextBox IsReadOnly="True" Margin="3"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="設定" Margin="3"/>
+                        <TextBox IsReadOnly="True" Margin="3"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="設定" Margin="3"/>
+                        <TextBox IsReadOnly="True" Margin="3"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="設定" Margin="3"/>
+                        <TextBox IsReadOnly="True" Margin="3"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="設定" Margin="3"/>
+                        <TextBox IsReadOnly="True" Margin="3"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="設定" Margin="3"/>
+                        <TextBox IsReadOnly="True" Margin="3"/>
+                    </DockPanel>
                     <TextBlock Text="修飾キー" Margin="3, 5"/>
-                    <CheckBox Content="右Windows"/>
-                    <CheckBox Content="右Alt"/>
-                    <CheckBox Content="右Shift"/>
-                    <CheckBox Content="右Ctrl"/>
-                    <CheckBox Content="左Windows"/>
-                    <CheckBox Content="左Alt"/>
-                    <CheckBox Content="左Shift"/>
-                    <CheckBox Content="左Ctrl"/>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Width="130">
+                            <CheckBox Content="左Windows"/>
+                            <CheckBox Content="左Alt"/>
+                            <CheckBox Content="左Shift"/>
+                            <CheckBox Content="左Ctrl"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <CheckBox Content="右Windows"/>
+                            <CheckBox Content="右Alt"/>
+                            <CheckBox Content="右Shift"/>
+                            <CheckBox Content="右Ctrl"/>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </TabItem>
             <TabItem>
