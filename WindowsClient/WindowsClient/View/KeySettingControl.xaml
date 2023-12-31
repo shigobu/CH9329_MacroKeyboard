@@ -86,10 +86,17 @@
                 </StackPanel>
             </TabItem>
             <TabItem>
-                <TextBlock Text="コマンド"/>
+                <StackPanel>
+                    <TextBlock Text="コマンド。指定の文字列を実行します。" Margin="3"/>
+                    <TextBox Margin="3"/>
+                </StackPanel>
             </TabItem>
             <TabItem>
-                <TextBlock Text="音"/>
+                <StackPanel>
+                    <TextBlock Text="音声ファイルを再生します。" Margin="3"/>
+                    <TextBox Margin="3"/>
+                    <Button Content="ファイルを開く" Margin="3" Width="100" HorizontalAlignment="Left"/>
+                </StackPanel>
             </TabItem>
         </TabControl>
     </DockPanel>
